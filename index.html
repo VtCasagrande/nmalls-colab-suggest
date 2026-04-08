@@ -656,7 +656,7 @@
 
   <!-- ═══ SCRIPT ═══ -->
   <script>
-    const WEBHOOK_URL = 'https://nmalls-n8n.mpdjxf.easypanel.host/webhook/7236f7f9-df48-4803-a3f2-8638584e2a1c';
+    const SUBMIT_URL = '/api/submit';
 
     // Char counters
     const tituloInput = document.getElementById('titulo');
@@ -707,7 +707,7 @@
       btn.classList.add('loading');
 
       try {
-        const res = await fetch(WEBHOOK_URL, {
+        const res = await fetch(SUBMIT_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
