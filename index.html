@@ -713,7 +713,17 @@
           body: JSON.stringify(payload),
         });
 
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        if (!res.ok) {
+          let detail = 'Não foi possível enviar sua sugestão. Verifique sua conexão e tente novamente.';
+          try {
+            const j = await res.json();
+            if (j && typeof j.hint === 'string' && j.hint.length) detail = j.hint;
+          } catch {
+            /* ignore */
+          }
+          showToast('error', '❌ Erro ao enviar', detail);
+          return;
+        }
 
         // Show success
         document.getElementById('suggestion-form').style.display = 'none';

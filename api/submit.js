@@ -40,7 +40,23 @@ export default async function handler(request) {
     if (!upstream.ok) {
       const text = await upstream.text();
       console.error('[submit] webhook HTTP', upstream.status, text.slice(0, 500));
-      return new Response(JSON.stringify({ error: 'Webhook rejected request' }), {
+
+      let hint =
+        'Não foi possível conectar ao sistema de registro. Tente mais tarde ou avise a equipe técnica.';
+      try {
+        const j = JSON.parse(text);
+        if (
+          upstream.status === 404 ||
+          (typeof j.message === 'string' && j.message.includes('not registered'))
+        ) {
+          hint =
+            'O webhook do n8n não está ativo ou a URL mudou. No n8n, ative o fluxo (interruptor no canto superior direito) e confira a URL de produção do nó Webhook.';
+        }
+      } catch {
+        /* ignore */
+      }
+
+      return new Response(JSON.stringify({ error: 'webhook_failed', hint }), {
         status: 502,
         headers: { 'Content-Type': 'application/json' },
       });
